@@ -154,6 +154,91 @@ spring:
   config:
     activate:
       on-profile: dev-env
+      
+  cloud:
+    gateway:
+      routes:
+#################### 공통 시작
+        ##공통관리 (Swagger 허용)
+        - id: com-common-api-swagger
+          uri: http://common:8080
+          predicates:
+            - Path=/com/common/api-docs, /com/common/api-docs/swagger-config, /com/common/swagger-ui/**, /com/common/swagger-resources/**
+        ##계정관리 (Swagger 허용)
+        - id: com-account-api-swagger
+          uri: http://account:8080
+          predicates:
+            - Path=/com/account/api-docs, /com/account/api-docs/swagger-config, /com/account/swagger-ui/**, /com/account/swagger-resources/**
+
+        ##공통관리
+        - id: com-common-api
+          uri: http://common:8080
+          predicates:
+            - Path=/api/v1/com/common/**
+          filters:
+            - LoginAuthFilter
+        ##계정관리 (NO 인증 섹션 )
+        - id: com-account-api-without-auth
+          uri: http://account:8080
+          predicates:
+            - Path=/api/v1/com/account/login
+        ##계정관리 (인증필요 섹션 )
+        - id: com-account-api
+          uri: http://account:8080
+          predicates:
+            - Path=/api/v1/com/account/**
+          filters:
+            - LoginAuthFilter
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - "*"
+#             - "*://localhost"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+            exposedHeaders: ["Content-Disposition", "token-status"]
+  data:
+    redis:
+      database: 0
+      host: redis.temp-infra.svc.cluster.local
+      port: 6379
+      password: "changeme"
+      timeout: 30000
+      lettuce:
+        pool:
+          maxTotal: 8
+          maxWaitMillis: 10000
+          maxIdle: 8
+          minIdle: 0
+
+springdoc:
+  swagger-ui:
+    use-root-path: true
+    urls[0]:
+      name: account
+      url: http://api-gateway:8080/com/account/swagger-ui/index.html
+    urls[1]:
+      name: common
+      url: http://api-gateway:8080/com/common/swagger-ui/index.html
+
+
+server:
+  port: 8080
+
+app:
+  ip:
+    whitelist: 127.0.0.1/32
+
+## JWT Key 값  추후 Secret으로 변경 예정 5분 x 60 x 1000 / 720분 x 60 x 1000
+  jwtSecret: jwtSecretKey
+  jwtExpirationMs: 300000
+  jwtRefreshExpirationMs: 43200000
+
 
 ---
 
