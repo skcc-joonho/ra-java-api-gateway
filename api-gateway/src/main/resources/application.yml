@@ -161,30 +161,30 @@ spring:
 #################### 공통 시작
         ##공통관리 (Swagger 허용)
         - id: com-common-api-swagger
-          uri: http://common:8080
+          uri: http://common-service.ra-common.svc.cluster.local:8080
           predicates:
             - Path=/com/common/api-docs, /com/common/api-docs/swagger-config, /com/common/swagger-ui/**, /com/common/swagger-resources/**
         ##계정관리 (Swagger 허용)
         - id: com-account-api-swagger
-          uri: http://account:8080
+          uri: http://account-service.ra-common.svc.cluster.local:8080
           predicates:
             - Path=/com/account/api-docs, /com/account/api-docs/swagger-config, /com/account/swagger-ui/**, /com/account/swagger-resources/**
 
         ##공통관리
         - id: com-common-api
-          uri: http://common:8080
+          uri: http://common-service.ra-common.svc.cluster.local:8080
           predicates:
             - Path=/api/v1/com/common/**
           filters:
             - LoginAuthFilter
         ##계정관리 (NO 인증 섹션 )
         - id: com-account-api-without-auth
-          uri: http://account:8080
+          uri: http://account-service.ra-common.svc.cluster.local:8080
           predicates:
             - Path=/api/v1/com/account/login
         ##계정관리 (인증필요 섹션 )
         - id: com-account-api
-          uri: http://account:8080
+          uri: http://account-service.ra-common.svc.cluster.local:8080
           predicates:
             - Path=/api/v1/com/account/**
           filters:
