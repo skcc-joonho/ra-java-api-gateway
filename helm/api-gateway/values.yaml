@@ -20,11 +20,23 @@ resources:
     cpu: 500m
     memory: 512Mi
 
-nodeSelector: {}
+nodeSelector:
+  agentpool: agent2
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - api-gateway
+        topologyKey: "kubernetes.io/hostname"
 
 tolerations: []
-
-affinity: {}
 
 env:
   - name: SPRING_PROFILES_ACTIVE
